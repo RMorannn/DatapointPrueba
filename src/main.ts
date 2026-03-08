@@ -1,8 +1,19 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(process.env.PORT ?? 3000);
+
+  // Habilitar validaciones globales con class-validator
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true, // Remueve propiedades que no estén en el DTO
+      forbidNonWhitelisted: true, // Lanza error si envían propiedades no deseadas
+    }),
+  );
+
+  const port = process.env.PORT ?? 3000;
+  await app.listen(port);
 }
 bootstrap();

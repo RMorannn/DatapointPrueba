@@ -1,98 +1,134 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# API de Tareas Datapoint
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Esta es una API RESTful construida con [NestJS](https://nestjs.com/) para la gestión de usuarios y tareas. Incluye autenticación basada en JWT y está integrada con una base de datos MySQL usando TypeORM.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Características
 
-## Description
+- **Autenticación de Usuarios**: Registro e inicio de sesión con correo electrónico y contraseña.
+- **Protección JWT**: Rutas de la API protegidas mediante JSON Web Tokens.
+- **Gestión de Tareas**: Crear, leer, actualizar y eliminar tareas (CRUD).
+- **Filtrado**: Obtener tareas filtradas por su estado (Pendiente, En Progreso, Completada).
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Tecnologías Utilizadas
 
-## Project setup
+- **Framework**: NestJS
+- **Lenguaje**: TypeScript
+- **Base de Datos**: MySQL
+- **ORM**: TypeORM
+- **Autenticación**: Passport.js + JWT
+
+## Descripción General de la Solución (Arquitectura y Enfoque)
+
+El backend está desarrollado siguiendo una arquitectura modular en capas basada en NestJS. Este enfoque garantiza una separación limpia de responsabilidades:
+- **Controladores**: Manejan el enrutamiento y las peticiones HTTP.
+- **Servicios**: Contienen toda la lógica de negocio.
+- **Módulos**: Organizan funcionalmente la app en dominios (User, Auth, Tasks).
+- **Capa de Datos**: Configurada mediante TypeORM, lo que permite abstracción sobre la base de datos, facilitando protección contra inyecciones SQL y un manejo relacional estable.
+
+Se ha implementado un sistema de autenticación seguro mediante JWT, lo que asegura que las rutas privadas estén fuertemente protegidas.
+
+## Explicación Breve (Punto de Vista del Usuario Final)
+
+El modelo de interacción para un usuario opera de la siguiente manera:
+1. **Registro/Ingreso**: Todo inicia creando una cuenta o logueándose, lo cual provee un token de acceso.
+2. **Tablero Personal (CRUD)**: Una vez autenticado, el usuario acciona sobre su "tablero personal", pudiendo crear, editar y eliminar tareas. El sistema **restringe y protege** para que el usuario solo opere y acceda a las tareas que le pertenecen, garantizando privacidad y seguridad.
+3. **Organización**: El usuario puede clasificar tareas por prioridades y estados, así como emplear filtros para organizarse eficientemente.
+4. **Extensibilidad de Roles**: El sistema está preparado para recibir filtros por `ownerId`, dando soporte en un futuro a la creación de perfiles de supervisor para visualizar las métricas y progreso del equipo.
+
+## Configuración del Proyecto
+
+1. **Clonar e instalar dependencias**:
+   ```bash
+   npm install
+   ```
+
+2. **Variables de Entorno**:
+   Crea un archivo `.env` en el directorio raíz basándote en las variables utilizadas en `app.module.ts`:
+   ```env
+   DB_HOST=localhost
+   DB_PORT=3306
+   DB_USERNAME=tu_usuario
+   DB_PASSWORD=tu_contraseña
+   DB_NAME=datapoint_tasks
+   JWT_SECRET=tu_clave_secreta_jwt
+   ```
+
+3. **Base de Datos**:
+   Asegúrate de tener un servidor MySQL en ejecución y de que la base de datos `datapoint_tasks` (o el nombre que hayas configurado en `DB_NAME`) esté creada. El ORM sincronizará automáticamente y creará las tablas al iniciar (`synchronize: true`).
+
+## Ejecutar la aplicación
 
 ```bash
-$ npm install
-```
-
-## Compile and run the project
-
-```bash
-# development
+# desarrollo
 $ npm run start
 
-# watch mode
+# modo observador (watch mode)
 $ npm run start:dev
 
-# production mode
+# modo producción
 $ npm run start:prod
 ```
 
-## Run tests
+## Documentación de la API
 
-```bash
-# unit tests
-$ npm run test
+### Autenticación (`/auth`)
 
-# e2e tests
-$ npm run test:e2e
+#### 1. Registrar un nuevo usuario
+- **Endpoint**: `POST /auth/register`
+- **Body**:
+  ```json
+  {
+    "email": "usuario@ejemplo.com",
+    "password": "contraseña",
+    "name": "Nombre del Usuario"
+  }
+  ```
 
-# test coverage
-$ npm run test:cov
-```
+#### 2. Iniciar sesión (Login)
+- **Endpoint**: `POST /auth/login`
+- **Body**:
+  ```json
+  {
+    "email": "usuario@ejemplo.com",
+    "password": "contraseña"
+  }
+  ```
+- **Respuesta**: Retorna un `access_token` que debe usarse como token Bearer para las rutas protegidas.
 
-## Deployment
+### Tareas (`/tasks`)
+*Todas las rutas de tareas están protegidas y requieren la cabecera `Authorization` con un token JWT Bearer (`Authorization: Bearer <access_token>`).*
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+#### 1. Obtener todas las tareas
+- **Endpoint**: `GET /tasks`
+- **Parámetros de consulta (Opcional)**: 
+  - `status`: ej. `?status=pending|in_progress|completed`
+  - `ownerId`: ej. `?ownerId=2` (Para filtrar las tareas de un usuario específico - útil para futuros roles de supervisor)
+- **Descripción**: Retorna todas las tareas pertenecientes al usuario autenticado (o de un `ownerId` específico si se provee el filtro).
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+#### 2. Crear una tarea
+- **Endpoint**: `POST /tasks`
+- **Body**:
+  ```json
+  {
+    "title": "Mi nueva tarea",
+    "description": "Detalles sobre la tarea",
+    "priority": "high",
+    "due_date": "2026-12-31"
+  }
+  ```
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+#### 3. Actualizar una tarea
+- **Endpoint**: `PUT /tasks/:id`
+- **Body**: Campos que deseas actualizar (ej. `status`).
+  ```json
+  {
+    "status": "in_progress"
+  }
+  ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+#### 4. Eliminar una tarea
+- **Endpoint**: `DELETE /tasks/:id`
+- **Descripción**: Elimina la tarea con el ID especificado.
 
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+---
+*Creado como proyecto de evaluación backend.*
