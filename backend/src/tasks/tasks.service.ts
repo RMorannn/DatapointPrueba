@@ -20,8 +20,13 @@ export class TasksService {
     return await this.tasksRepository.save(newTask);
   }
 
-  // Obtener todas las tareas con filtro opcional por estado y usuario
-  async findAll(status?: TaskStatus, userId?: number): Promise<Task[]> {
+  // Obtener todas las tareas con filtro opcional por estado y usuario y paginación
+  async findAll(
+    status?: TaskStatus,
+    userId?: number,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{ data: Task[]; total: number; page: number; totalPages: number }> {
     const query = this.tasksRepository.createQueryBuilder('task');
     if (userId) {
       // TypeORM generalmente crea la columna con el nombre propiedad + Id
@@ -30,7 +35,32 @@ export class TasksService {
     if (status) {
       query.andWhere('task.status = :status', { status });
     }
-    return await query.getMany();
+    
+    // Ordenar por las más recientes primero
+    query.orderBy('task.created_at', 'DESC');
+
+    // Paginación
+    query.skip((page - 1) * limit);
+    query.take(limit);
+
+    const [data, total] = await query.getManyAndCount();
+
+    return {
+      data,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  // Obtener una tarea por ID
+  async findOne(id: number, userId: number): Promise<Task> {
+    const task = await this.tasksRepository.findOne({
+      where: { id, owner: { id: userId } },
+    });
+    if (!task)
+      throw new NotFoundException(`Tarea con ID ${id} no encontrada`);
+    return task;
   }
 
   // Editar Tarea

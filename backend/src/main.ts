@@ -13,6 +13,12 @@ async function bootstrap() {
     }),
   );
 
+  // Habilitar CORS para permitir peticiones desde el frontend
+  app.enableCors({
+    origin: '*', // En producción cambiar por el dominio de la app
+    credentials: true,
+  });
+
   const port = process.env.PORT ?? 3000;
   await app.listen(port);
 }

@@ -33,13 +33,24 @@ export class TasksController {
   @Get()
   async findAll(
     @Request() req: { user: { userId: number } },
-    @Query('status') status: TaskStatus,
-    @Query('ownerId') ownerId?: number,
+    @Query('status') status?: TaskStatus,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
   ) {
-    // Para rol de supervisor, permitiremos ownerId en el query.
-    // Actualmente, un usuario normal solo ve sus propios tasks:
-    const targetUserId = ownerId ? ownerId : req.user.userId;
-    return await this.tasksService.findAll(status, targetUserId);
+    // Si quisieramos rol de admin para ver todas, aquí podríamos modificar la lógica.
+    // Por ahora filtramos para que solo devuelva las tareas de este usuario logueado.
+    const targetUserId = req.user.userId;
+    const pageNumber = parseInt(page as string) || 1;
+    const limitNumber = parseInt(limit as string) || 10;
+    return await this.tasksService.findAll(status, targetUserId, pageNumber, limitNumber);
+  }
+
+  @Get(':id')
+  async findOne(
+    @Request() req: { user: { userId: number } },
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return await this.tasksService.findOne(id, req.user.userId);
   }
 
   @Put(':id')

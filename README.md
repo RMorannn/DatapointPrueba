@@ -145,9 +145,39 @@ $ npm run start:prod
 
 ---
 
-## Frontend
+## Frontend (Aplicación Cliente)
 
-*Actualmente la aplicación cliente (frontend) está configurada en su directorio `/frontend` respectivo y en desarrollo.*
+El frontend es una Single Page Application (SPA) construida con React y TypeScript, diseñada para consumir la API REST del backend.
 
----
+### Características y Tecnologías Stack
+
+- **Framework**: React (inicializado con Vite)
+- **Lenguaje**: TypeScript
+- **Estilos**: Tailwind CSS v3
+- **Enrutamiento**: React Router
+- **Peticiones HTTP**: Axios con interceptores para manejo automático de tokens JWT.
+
+### Configuración y Ejecución Local
+
+1. **Ingresar a la carpeta e instalar dependencias**:
+   ```bash
+   cd frontend
+   npm install
+   ```
+
+2. **Variables de Entorno**:
+   El proyecto utiliza Vite, por lo que las variables se definen en `.env` (o `.env.local`). Por defecto, la app apuntará a `http://localhost:3000` si no se provee la variable.
+   ```env
+   VITE_API_URL=http://localhost:3000
+   ```
+
+3. **Ejecutar en desarrollo**:
+   ```bash
+   npm run dev
+   ```
+
+4. **Construir para producción**:
+   ```bash
+   npm run build
+   ```
 *Creado como proyecto de evaluación backend.*
