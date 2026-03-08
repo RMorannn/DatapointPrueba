@@ -22,11 +22,11 @@ Esta es una API RESTful construida con [NestJS](https://nestjs.com/) para la ges
 
 ### Tecnologías Utilizadas
 
-- **Framework**: NestJS
-- **Lenguaje**: TypeScript
-- **Base de Datos**: MySQL
+- **Frontend**: React, TypeScript, Vite, Tailwind CSS v3, Axios, React Router, react-hot-toast.
+- **Backend**: NestJS, Node.js, TypeScript.
+- **Base de Datos**: MySQL (Alojada en AWS RDS)
 - **ORM**: TypeORM
-- **Autenticación**: Passport.js + JWT
+- **Autenticación**: Passport.js + Bcrypt + JWT
 
 ### Descripción General de la Solución (Arquitectura y Enfoque)
 
@@ -41,10 +41,10 @@ Se ha implementado un sistema de autenticación seguro mediante JWT, lo que aseg
 ### Explicación Breve (Punto de Vista del Usuario Final)
 
 El modelo de interacción para un usuario opera de la siguiente manera:
-1. **Registro/Ingreso**: Todo inicia creando una cuenta o logueándose, lo cual provee un token de acceso.
-2. **Tablero Personal (CRUD)**: Una vez autenticado, el usuario acciona sobre su "tablero personal", pudiendo crear, editar y eliminar tareas. El sistema **restringe y protege** para que el usuario solo opere y acceda a las tareas que le pertenecen, garantizando privacidad y seguridad.
-3. **Organización**: El usuario puede clasificar tareas por prioridades y estados, así como emplear filtros para organizarse eficientemente.
-4. **Extensibilidad de Roles**: El sistema está preparado para recibir filtros por `ownerId`, dando soporte en un futuro a la creación de perfiles de supervisor para visualizar las métricas y progreso del equipo.
+1. **Registro/Ingreso**: Todo inicia creando una cuenta o logueándose, lo cual provee un token de acceso seguro (JWT).
+2. **Tablero Personal (CRUD)**: Una vez autenticado, el usuario accede a una interfaz (SPA) fluida. Desde allí puede crear, editar y eliminar tareas interactuando con modales y formularios limpios. El sistema **restringe y protege** para que el usuario solo opere y acceda a las tareas que le pertenecen, garantizando privacidad mediante validación del token.
+3. **Organización y Paginación**: El usuario puede clasificar tareas por prioridades (low, medium, high) y cambiarlas de estado (pending, in_progress, completed) de forma interactiva con un solo clic. La lista cuenta con **paginación automática** para manejar un gran volumen de datos sin degradar el rendimiento.
+4. **Respuesta Rápida**: Gracias al uso de notificaciones Toast y estado optimista en el frontend, el usuario recibe validación visual instantánea de cada acción que realiza.
 
 ### Configuración del Proyecto (Backend)
 
@@ -111,12 +111,13 @@ $ npm run start:prod
 #### Tareas (`/tasks`)
 *Todas las rutas de tareas están protegidas y requieren la cabecera `Authorization` con un token JWT Bearer (`Authorization: Bearer <access_token>`).*
 
-##### 1. Obtener todas las tareas
+##### 1. Obtener todas las tareas (Paginadas)
 - **Endpoint**: `GET /tasks`
 - **Parámetros de consulta (Opcional)**: 
   - `status`: ej. `?status=pending|in_progress|completed`
-  - `ownerId`: ej. `?ownerId=2` (Para filtrar las tareas de un usuario específico - útil para futuros roles de supervisor)
-- **Descripción**: Retorna todas las tareas pertenecientes al usuario autenticado (o de un `ownerId` específico si se provee el filtro).
+  - `page`: Número de página (por defecto 1).
+  - `limit`: Cantidad de resultados por página (por defecto 10).
+- **Descripción**: Retorna todas las tareas pertenecientes al usuario autenticado, ordenadas de la más reciente a la más antigua. La respuesta incluye metadata de paginación (`data`, `total`, `page`, `totalPages`).
 
 ##### 2. Crear una tarea
 - **Endpoint**: `POST /tasks`
@@ -180,4 +181,5 @@ El frontend es una Single Page Application (SPA) construida con React y TypeScri
    ```bash
    npm run build
    ```
-*Creado como proyecto de evaluación backend.*
+
+*Desarrollado como proyecto de evaluación Fullstack.*

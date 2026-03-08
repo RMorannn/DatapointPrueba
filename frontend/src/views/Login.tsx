@@ -41,7 +41,7 @@ const Login: React.FC = () => {
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg border border-gray-200">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-blue-900">
-            Log in to Datapoint
+            Log in to Task Manager
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Access your technical team tasks
